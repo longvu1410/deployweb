@@ -1,0 +1,32 @@
+
+
+services:
+  # MySQL service
+  mysql:
+    image: mysql:8
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: bikeshop
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./init-db:/docker-entrypoint-initdb.d
+    networks:
+      - webnet
+
+  # Web application service
+  web:
+    build:
+      context: .  # Dockerfile nằm trong thư mục gốc của dự án
+    container_name: webapp
+    ports:
+      - "8080:8080"  # Mở cổng của ứng dụng web
+    depends_on:
+      - mysql  # Đảm bảo MySQL khởi động trước
+    networks:
+      - webnet
+
+networks:
+  webnet:
+    driver: bridge
